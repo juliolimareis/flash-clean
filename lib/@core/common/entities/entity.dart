@@ -9,14 +9,20 @@ abstract class Entity {
     } else {
       _createdAt = DateTime.parse(createdAt);
     }
+
+    if (updatedAt == null || updatedAt.isEmpty) {
+      _updatedAt = _createdAt;
+    } else {
+      _updatedAt = DateTime.parse(updatedAt);
+    }
   }
 
   DateTime get createdAt => _createdAt as DateTime;
-  DateTime? get updatedAt => _updatedAt;
+  DateTime get updatedAt => _updatedAt as DateTime;
 
   touch() {
     _updatedAt = DateTime.now();
   }
 
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toMap();
 }
