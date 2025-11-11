@@ -38,7 +38,6 @@ class TaskRepository implements DatabaseRepositoryI<TaskEntity> {
   Future<TaskEntity> create(TaskEntity card) async {
     final inserted = await _adapter.insert(card.toMap());
 
-    await _adapter.commit();
     return TaskEntity.fromMap(inserted);
   }
 
@@ -49,13 +48,11 @@ class TaskRepository implements DatabaseRepositoryI<TaskEntity> {
     }
 
     await _adapter.update(card.id!, card.toMap());
-    await _adapter.commit();
   }
 
   @override
   Future<void> remove(String id) async {
     await _adapter.delete(id);
-    await _adapter.commit();
   }
 }
 

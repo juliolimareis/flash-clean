@@ -3,14 +3,14 @@ abstract class Entity {
   DateTime? _createdAt;
   DateTime? _updatedAt;
 
-  Entity({this.id, String? updatedAt, String? createdAt}) {
-    if (createdAt == null || createdAt.isEmpty) {
+  Entity({this.id, String? createdAt, String? updatedAt}) {
+    if (createdAt == null) {
       _createdAt = DateTime.now();
     } else {
       _createdAt = DateTime.parse(createdAt);
     }
 
-    if (updatedAt == null || updatedAt.isEmpty) {
+    if (updatedAt == null) {
       _updatedAt = _createdAt;
     } else {
       _updatedAt = DateTime.parse(updatedAt);

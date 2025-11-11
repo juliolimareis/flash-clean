@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flash_clean/@core/task/entities/task.entity.dart';
 import 'package:flash_clean/@core/common/infra/database/interface/database.adapter.interface.dart';
 import 'package:flash_clean/@core/task/infra/task.repository.dart';
@@ -79,13 +79,13 @@ void main() {
       );
 
       when(() => adapter.insert(any())).thenAnswer((_) async => card.toMap());
-      when(() => adapter.commit()).thenAnswer((_) async {});
+      // when(() => adapter.commit()).thenAnswer((_) async {});
 
       final result = await repository.create(card);
 
       expect(result.title, equals('Criar Card'));
       verify(() => adapter.insert(any())).called(1);
-      verify(() => adapter.commit()).called(1);
+      // verify(() => adapter.commit()).called(1);
     });
 
     test('update lança exceção se ID estiver ausente', () async {

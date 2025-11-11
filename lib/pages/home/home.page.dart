@@ -12,6 +12,15 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: FlashCleanAppBar(),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     final result = await Get.to(() => const TaskFormPage());
+      //     if (result == true) {
+      //       controller.onGetAllTasks();
+      //     }
+      //   },
+      //   child: const Icon(Icons.add),
+      // ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -40,20 +49,23 @@ class HomePage extends StatelessWidget {
                         a.expirationPercentage,
                       ),
                     );
-                  return ListView.builder(
-                    padding: const EdgeInsets.only(top: 8),
-                    itemCount: sortedTasks.length,
-                    itemBuilder: (context, index) {
-                      final task = sortedTasks[index];
-                      return Dismissible(
-                        key: ObjectKey(task),
-                        direction: DismissDirection.startToEnd,
-                        onDismissed: (direction) {
-                          controller.tasks.remove(task);
-                        },
-                        child: TaskCard(task: task),
-                      );
-                    },
+                  return RefreshIndicator(
+                    onRefresh: controller.onGetAllTasks,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 8),
+                      itemCount: sortedTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = sortedTasks[index];
+                        return Dismissible(
+                          key: ObjectKey(task),
+                          direction: DismissDirection.startToEnd,
+                          onDismissed: (direction) {
+                            controller.tasks.remove(task);
+                          },
+                          child: TaskCard(task: task),
+                        );
+                      },
+                    ),
                   );
                 }),
               ),

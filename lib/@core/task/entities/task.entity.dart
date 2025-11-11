@@ -2,34 +2,32 @@ import "package:flash_clean/@core/common/entities/entity.dart";
 
 class TaskEntity extends Entity {
   int time;
-  String desc;
+  String? desc;
   String title;
   String tagName;
   int daysToExpire;
   String? imageUrlBackground;
   String? imageUrlSide;
 
-  late DateTime _lastRuleUpdated;
+  late DateTime lastRuleUpdated;
 
   TaskEntity({
     super.id,
     super.updatedAt,
     super.createdAt,
     required this.title,
-    required this.desc,
     required this.daysToExpire,
     required this.time,
     required this.tagName,
-    this.imageUrlBackground,
+    this.desc,
     this.imageUrlSide,
+    this.imageUrlBackground,
     String? lastRuleUpdated,
   }) {
-    _lastRuleUpdated = lastRuleUpdated == null
+    this.lastRuleUpdated = lastRuleUpdated == null
         ? DateTime.now()
         : DateTime.parse(lastRuleUpdated);
   }
-
-  get lastRuleUpdated => _lastRuleUpdated;
 
   int get remainingDaysToExpire {
     final expirationDate = lastRuleUpdated.add(Duration(days: daysToExpire));
@@ -60,11 +58,11 @@ class TaskEntity extends Entity {
       "title": title,
       "tagName": tagName,
       "daysToExpire": daysToExpire,
+      "imageUrlSide": imageUrlSide,
+      "imageUrlBackground": imageUrlBackground,
       "createdAt": createdAt.toIso8601String(),
       "updatedAt": updatedAt.toIso8601String(),
-      "lastRuleUpdated": _lastRuleUpdated.toIso8601String(),
-      "imageUrlBackground": imageUrlBackground,
-      "imageUrlSide": imageUrlSide,
+      "lastRuleUpdated": lastRuleUpdated.toIso8601String(),
     };
   }
 
@@ -78,8 +76,9 @@ class TaskEntity extends Entity {
       updatedAt: map['updatedAt'],
       createdAt: map['createdAt'],
       daysToExpire: map['daysToExpire'],
-      imageUrlBackground: map['imageUrlBackground'],
       imageUrlSide: map['imageUrlSide'],
+      lastRuleUpdated: map['lastRuleUpdated'],
+      imageUrlBackground: map['imageUrlBackground'],
     );
   }
 }
