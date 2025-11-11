@@ -25,7 +25,7 @@ class Item extends Entity {
   });
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       "id": id,
       "desc": desc,
