@@ -35,7 +35,7 @@ class TaskFormController extends GetxController {
       );
 
       try {
-        await _taskService.add(newTask);
+        // await _taskService.(newTask);
         Get.back(result: true); // Go back and indicate success
       } catch (e) {
         Get.snackbar('Erro', 'Não foi possível salvar a tarefa.');

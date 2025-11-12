@@ -109,22 +109,23 @@ class TaskCard extends StatelessWidget {
                       // ),
                       Spacer(),
 
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: [
+                      //     Icon(Icons.date_range, color: shadowColor, size: 25),
+                      //     Text(
+                      //       "${task.daysToExpire}",
+                      //       style: TextStyle(
+                      //         color: shadowColor,
+                      //         fontSize: 20,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          // OutlinedButton(
-                          //   style: OutlinedButton.styleFrom(
-                          //     backgroundColor: Colors.orange,
-                          //     side: const BorderSide(color: Colors.white70),
-                          //     foregroundColor: Colors.white,
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(8),
-                          //     ),
-                          //   ),
-                          //   onPressed: () {},
-                          //   child: const Text('Join now'),
-                          // ),
-                          Icon(Icons.access_time, color: shadowColor, size: 25),
                           Text(
                             "${task.time}",
                             style: TextStyle(
@@ -133,10 +134,8 @@ class TaskCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // const Text(
-                          //   'Clean',
-                          //   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                          // ),
+                          SizedBox(width: 5),
+                          Icon(Icons.access_time, color: shadowColor, size: 25),
                         ],
                       ),
                     ],

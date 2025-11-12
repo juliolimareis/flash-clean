@@ -54,13 +54,13 @@ class HomePage extends StatelessWidget {
                     child: ListView.builder(
                       padding: const EdgeInsets.only(top: 8),
                       itemCount: sortedTasks.length,
-                      itemBuilder: (context, index) {
-                        final task = sortedTasks[index];
+                      itemBuilder: (context, i) {
+                        final task = sortedTasks[i];
                         return Dismissible(
                           key: ObjectKey(task),
                           direction: DismissDirection.startToEnd,
                           onDismissed: (direction) {
-                            controller.tasks.remove(task);
+                            controller.chooseTask(task);
                           },
                           child: TaskCard(task: task),
                         );

@@ -56,6 +56,12 @@ class HomeController extends GetxController {
     onGetAllTasks();
   }
 
+  Future<void> chooseTask(TaskEntity task) async {
+    task.touchLastRuleUpdated();
+    await taskService.update(task);
+    await onGetAllTasks();
+  }
+
   Future<void> onGetAllTasks() async {
     tasks.value = await taskService.getAll(null);
   }

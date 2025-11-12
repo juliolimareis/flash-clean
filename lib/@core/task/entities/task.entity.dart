@@ -49,6 +49,10 @@ class TaskEntity extends Entity {
     return (daysPassed / daysToExpire) * 100;
   }
 
+  void touchLastRuleUpdated() {
+    lastRuleUpdated = DateTime.now();
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {

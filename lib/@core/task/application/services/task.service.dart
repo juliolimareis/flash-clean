@@ -11,7 +11,7 @@ class TaskService {
     return taskRepository.fetch(options);
   }
 
-  Future<TaskEntity> add(TaskEntity task) async {
-    return taskRepository.create(task);
+  Future<void> update(TaskEntity task) async {
+    return taskRepository.update(task);
   }
 }
