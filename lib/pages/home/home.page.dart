@@ -5,7 +5,7 @@ import 'package:flash_clean/pages/home/components/task-card.dart';
 import 'package:flash_clean/pages/home/components/home-appbar.component.dart';
 
 class HomePage extends StatelessWidget {
-  final controller = Get.put(HomeController());
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {

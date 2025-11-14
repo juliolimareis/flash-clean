@@ -44,7 +44,7 @@ class TaskRepository implements DatabaseRepositoryI<TaskEntity> {
   @override
   Future<void> update(TaskEntity card) async {
     if (card.id == null) {
-      throw CardRepositoryException('Missing user ID');
+      throw TaskRepositoryException('Missing user ID');
     }
 
     await _adapter.update(card.id!, card.toMap());
@@ -56,14 +56,14 @@ class TaskRepository implements DatabaseRepositoryI<TaskEntity> {
   }
 }
 
-class CardRepositoryException implements Exception {
+class TaskRepositoryException implements Exception {
   final String message;
   final int? code;
 
-  CardRepositoryException(this.message, {this.code});
+  TaskRepositoryException(this.message, {this.code});
 
   @override
   String toString() {
-    return "CardRepositoryException: $message (code: ${code ?? 'no code'})";
+    return "TaskRepositoryException: $message (code: ${code ?? 'no code'})";
   }
 }

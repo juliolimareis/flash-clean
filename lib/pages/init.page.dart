@@ -1,7 +1,7 @@
-import 'package:flash_clean/pages/home/home.page.dart';
-import 'package:flash_clean/services/supabase.auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flash_clean/pages/home/home.page.dart';
+import 'package:flash_clean/services/supabase.auth.dart';
 import 'package:flash_clean/pages/login/login.page.dart';
 
 class InitPage extends StatefulWidget {
@@ -32,8 +32,6 @@ class _InitPageState extends State<InitPage>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     Future.delayed(const Duration(seconds: 1), () {
-      // Get.off(() => LoginPage());
-
       if (SupabaseAuth().isLoggedIn()) {
         Get.off(() => HomePage());
       } else {

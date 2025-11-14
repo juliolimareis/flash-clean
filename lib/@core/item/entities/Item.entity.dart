@@ -3,16 +3,16 @@ import "package:flash_clean/@core/common/entities/entity.dart";
 // ignore: constant_identifier_names
 enum ItemType { WALLPAPER, SKIN, ARTEFACT }
 
-class Item extends Entity {
+class ItemEntity extends Entity {
   int price;
   int ticket;
   String desc;
   String title;
   ItemType type;
   String imageUrl;
-  int daysToExpire;
+  int expireDays;
 
-  Item({
+  ItemEntity({
     super.id,
     super.updatedAt,
     required this.type,
@@ -21,7 +21,7 @@ class Item extends Entity {
     required this.title,
     required this.ticket,
     required this.imageUrl,
-    required this.daysToExpire,
+    required this.expireDays,
   });
 
   @override
@@ -32,15 +32,32 @@ class Item extends Entity {
       "title": title,
       "price": price,
       "ticket": ticket,
-      "type": type.name,
+      "type": itemTypeToInt(type),
       "imageUrl": imageUrl,
-      "daysToExpire": daysToExpire,
-      "updatedAt": createdAt.toIso8601String(),
-      "createdAt": updatedAt?.toIso8601String(),
+      "expireDays": expireDays,
+      "createdAt": createdAt.toIso8601String(),
     };
   }
 
-  String? propsDateToString(DateTime? date) {
-    return date?.toIso8601String();
+  factory ItemEntity.fromMap(Map<String, dynamic> map) {
+    return ItemEntity(
+      id: map['id'],
+      title: map['title'],
+      desc: map['desc'],
+      price: map['price'],
+      ticket: map['ticket'],
+      type: itemTypeFromInt(map['type']),
+      imageUrl: map['imageUrl'],
+      expireDays: map['expireDays'],
+      updatedAt: map['createdAt'],
+    );
+  }
+
+  int itemTypeToInt(ItemType type) {
+    return type.index;
+  }
+
+  static ItemType itemTypeFromInt(int value) {
+    return ItemType.values[value];
   }
 }

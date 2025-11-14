@@ -86,13 +86,13 @@ class SupabaseDatabaseDriver<T extends Map<String, dynamic>>
         .eq('id', id)
         .maybeSingle();
 
-    return result as T;
+    return result as T?;
   }
 
   @override
   Future<T> insert(T object) async {
     final data = {...object};
-    data.remove('id');
+    // data.remove('id');
 
     final res = await _client.from(tableName).insert(data).select().single();
     return {...res} as T;
