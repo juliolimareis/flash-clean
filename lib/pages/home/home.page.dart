@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_clean/pages/home/home.controller.dart';
-import 'package:flash_clean/pages/home/components/task-card.dart';
+import 'package:flash_clean/pages/home/components/task-card.component.dart';
 import 'package:flash_clean/pages/home/components/home-appbar.component.dart';
 
 class HomePage extends StatelessWidget {
@@ -43,19 +43,20 @@ class HomePage extends StatelessWidget {
               // Task List
               Expanded(
                 child: Obx(() {
-                  final sortedTasks = controller.tasks.toList()
-                    ..sort(
-                      (a, b) => b.expirationPercentage.compareTo(
-                        a.expirationPercentage,
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.orangeAccent,
                       ),
                     );
+                  }
                   return RefreshIndicator(
-                    onRefresh: controller.onGetAllTasks,
+                    onRefresh: controller.onGetAllTasksWithLoader,
                     child: ListView.builder(
                       padding: const EdgeInsets.only(top: 8),
-                      itemCount: sortedTasks.length,
+                      itemCount: controller.tasks.length,
                       itemBuilder: (context, i) {
-                        final task = sortedTasks[i];
+                        final task = controller.tasks[i];
                         return Dismissible(
                           key: ObjectKey(task),
                           direction: DismissDirection.startToEnd,

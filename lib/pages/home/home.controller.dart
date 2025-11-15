@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flash_clean/@core/user/user.entity.dart';
@@ -10,23 +11,25 @@ import 'package:flash_clean/@core/task/application/services/task.supabase.factor
 final MAX_ENERGY = 20;
 
 class HomeController extends GetxController {
-  RxInt maxEnergy = 0.obs;
-  RxInt energy = 0.obs;
-  RxInt cash = 0.obs;
-  Rxn<UserEntity> user = Rxn<UserEntity>();
+  final RxInt maxEnergy = 0.obs;
+  final RxInt energy = 0.obs;
+  final RxInt cash = 0.obs;
+  final Rxn<UserEntity> user = Rxn<UserEntity>();
+  final RxMap<String, dynamic> undo = RxMap<String, dynamic>();
+  final RxList<TaskEntity> tasks = <TaskEntity>[].obs;
+  final RxBool isLoading = true.obs;
 
   final supabaseUser = Supabase.instance.client.auth.currentUser;
-
-  RxList<TaskEntity> tasks = <TaskEntity>[].obs;
-
   final UserService userService = UserServiceFactory.buildSupabase();
   final TaskService taskService = TaskServiceFactory.buildSupabase();
 
   @override
   void onReady() {
     super.onReady();
-    onGetAllTasks();
-    getUser();
+    onGetAllTasksWithLoader();
+    getUser().then((_) {
+      handleRecoveryEnergy();
+    });
     maxEnergy.value = MAX_ENERGY;
   }
 
@@ -42,52 +45,116 @@ class HomeController extends GetxController {
     }
 
     energy.value = user.value!.energy;
+    cash.value = user.value!.cash;
   }
 
   String cashLabel() {
     return "${cash}";
   }
 
-  //crie uma função para verificar se ultima vez que user.lastUpdatedEnergy foi atualizado a 24h atrás
-  //  bool wasEnergyUpdatedInLast24Hours() {
-  void recoveryEnergy() async {
+  bool get isNewDay {
     final lastUpdated = user.value!.lastUpdatedEnergy;
 
-    if (DateTime.now().difference(lastUpdated).inHours < 24) {
-      user.value!.setEnergy(0);
+    final now = DateTime.now();
+    final midnight = DateTime(now.year, now.month, now.day);
+
+    if (lastUpdated.isBefore(midnight)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void handleRecoveryEnergy() async {
+    if (isNewDay) {
+      if (energy.value < maxEnergy.value) {
+        energy.value = maxEnergy.value - energy.value;
+      } else {
+        energy.value = 0;
+      }
+
+      user.value!.setEnergy(energy.value);
+      user.value!.lastUpdatedEnergy = DateTime.now();
+
       await updateUser();
     }
   }
 
-  Future<void> chooseTask(TaskEntity task) async {
-    task.touchLastRuleUpdated();
-    await taskService.update(task);
-    await onGetAllTasks();
+  Future<void> onUndoTask() async {
+    UserEntity userUndo = undo["user"];
+    TaskEntity taskUndo = undo["task"];
 
-    if (task.time < maxEnergy.value && energy.value < maxEnergy.value) {
-      await sumEnergy(task.time);
+    this.user.value = userUndo;
+    this.energy.value = userUndo.energy;
+    this.cash.value = userUndo.cash;
+
+    await updateTask(taskUndo);
+    await updateUser();
+    undo.clear();
+  }
+
+  Future<void> chooseTask(TaskEntity task) async {
+    undo["user"] = UserEntity.fromMap(user.value!.toMap());
+    undo["task"] = TaskEntity.fromMap(task.toMap());
+
+    task.touchLastRuleUpdated();
+    await updateTask(task);
+
+    if (task.time <= maxEnergy.value && energy.value < maxEnergy.value) {
+      this.energy.value += task.time;
 
       if (energy.value > maxEnergy.value) {
         energy.value = maxEnergy.value;
       }
 
+      this.cash.value += task.time;
+      user.value!.setCash(this.cash.value);
+      user.value!.setEnergy(this.energy.value);
+
       await updateUser();
     }
+
+    showUndoSnackbar(task);
   }
 
-  Future<void> sumEnergy(int energy) async {
-    this.cash.value += energy;
-    this.energy.value += energy;
-    user.value!.setCash(this.cash.value);
-    user.value!.setEnergy(this.energy.value);
+  void showUndoSnackbar(TaskEntity task) {
+    Get.closeCurrentSnackbar();
+    Get.snackbar(
+      'Undo',
+      task.title,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.black,
+      colorText: Colors.blueAccent,
+      duration: Duration(seconds: 10),
+      onTap: (snack) {
+        Get.closeCurrentSnackbar();
+        onUndoTask();
+      },
+    );
   }
 
   Future<void> updateUser() async {
     await userService.update(user.value!);
   }
 
+  Future<void> updateTask(TaskEntity task) async {
+    await taskService.update(task);
+    onGetAllTasks();
+  }
+
+  Future<void> onGetAllTasksWithLoader() async {
+    isLoading.value = true;
+    await onGetAllTasks();
+    isLoading.value = false;
+  }
+
   Future<void> onGetAllTasks() async {
-    tasks.value = await taskService.getAll(null);
+    final currentTasks = await taskService.getAll(null);
+
+    tasks.value = currentTasks
+      ..sort(
+        (a, b) => b.expirationPercentage.compareTo(a.expirationPercentage),
+      );
   }
 
   Future<void> goToStore() async {

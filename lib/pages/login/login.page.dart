@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flash_clean/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_clean/pages/login/login.controller.dart';
 
@@ -101,6 +102,15 @@ class LoginPage extends StatelessWidget {
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
+                ),
+              ),
+
+              SizedBox(height: 10),
+
+              Center(
+                child: Text(
+                  VERSION,
+                  style: TextStyle(color: Colors.orange, fontSize: 16),
                 ),
               ),
             ],
