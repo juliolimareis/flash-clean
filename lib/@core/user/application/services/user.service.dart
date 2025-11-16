@@ -1,4 +1,4 @@
-import 'package:flash_clean/@core/user/user.entity.dart';
+import 'package:flash_clean/@core/user/entities/user.entity.dart';
 import 'package:flash_clean/@core/user/infra/user.repository.dart';
 
 class UserService {

@@ -1,4 +1,4 @@
-import 'package:flash_clean/@core/user/user.entity.dart';
+import 'package:flash_clean/@core/user/entities/user.entity.dart';
 import 'package:flash_clean/@core/common/infra/database/interface/database.repository.dart';
 import 'package:flash_clean/@core/common/infra/database/interface/database.adapter.interface.dart';
 

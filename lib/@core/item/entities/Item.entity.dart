@@ -1,27 +1,31 @@
 import "package:flash_clean/@core/common/entities/entity.dart";
 
 // ignore: constant_identifier_names
-enum ItemType { WALLPAPER, SKIN, ARTEFACT }
+enum ItemType { SKIN, SIDE, ARTEFACT }
 
 class ItemEntity extends Entity {
   int price;
   int ticket;
   String desc;
   String title;
+  int discount;
   ItemType type;
   String imageUrl;
-  int expireDays;
+  int expirationDays;
+  bool isAvailableInStore;
 
   ItemEntity({
     super.id,
-    super.updatedAt,
+    super.createdAt,
     required this.type,
     required this.desc,
     required this.price,
     required this.title,
     required this.ticket,
     required this.imageUrl,
-    required this.expireDays,
+    required this.expirationDays,
+    this.discount = 0,
+    this.isAvailableInStore = false,
   });
 
   @override
@@ -32,9 +36,11 @@ class ItemEntity extends Entity {
       "title": title,
       "price": price,
       "ticket": ticket,
-      "type": itemTypeToInt(type),
+      "discount": discount,
       "imageUrl": imageUrl,
-      "expireDays": expireDays,
+      "type": itemTypeToInt(type),
+      "expirationDays": expirationDays,
+      "isAvailableInStore": isAvailableInStore,
       "createdAt": createdAt.toIso8601String(),
     };
   }
@@ -45,11 +51,13 @@ class ItemEntity extends Entity {
       title: map['title'],
       desc: map['desc'],
       price: map['price'],
-      ticket: map['ticket'],
-      type: itemTypeFromInt(map['type']),
+      ticket: map['ticket'] ?? 0,
       imageUrl: map['imageUrl'],
-      expireDays: map['expireDays'],
-      updatedAt: map['createdAt'],
+      createdAt: map['createdAt'],
+      discount: map['discount'] ?? 0,
+      type: itemTypeFromInt(map['type']),
+      expirationDays: map['expirationDays'],
+      isAvailableInStore: map['isAvailableInStore'] ?? false,
     );
   }
 
@@ -59,5 +67,16 @@ class ItemEntity extends Entity {
 
   static ItemType itemTypeFromInt(int value) {
     return ItemType.values[value];
+  }
+
+  String getTypeName() {
+    switch (type) {
+      case ItemType.SKIN:
+        return "Skin";
+      case ItemType.SIDE:
+        return "Side";
+      case ItemType.ARTEFACT:
+        return "Artefact";
+    }
   }
 }

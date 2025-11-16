@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flash_clean/@core/user/entities/userInventoryItem.entity.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flash_clean/@core/user/user.entity.dart';
+import 'package:flash_clean/@core/user/entities/user.entity.dart';
 import 'package:flash_clean/@core/task/entities/task.entity.dart';
+import 'package:flash_clean/@core/item/application/services/item.service.dart';
 import 'package:flash_clean/@core/task/application/services/task.service.dart';
 import 'package:flash_clean/@core/user/application/services/user.service.dart';
+import 'package:flash_clean/@core/item/application/services/item.service.factory.dart';
 import 'package:flash_clean/@core/user/application/services/user.service.factory.dart';
 import 'package:flash_clean/@core/task/application/services/task.supabase.factory.service.dart';
 
@@ -18,10 +21,13 @@ class HomeController extends GetxController {
   final RxMap<String, dynamic> undo = RxMap<String, dynamic>();
   final RxList<TaskEntity> tasks = <TaskEntity>[].obs;
   final RxBool isLoading = true.obs;
+  final userItems = <UserInventoryItemEntity>[].obs;
 
   final supabaseUser = Supabase.instance.client.auth.currentUser;
+
   final UserService userService = UserServiceFactory.buildSupabase();
   final TaskService taskService = TaskServiceFactory.buildSupabase();
+  final ItemService itemService = ItemServiceFactory.buildSupabase();
 
   @override
   void onReady() {
@@ -30,7 +36,12 @@ class HomeController extends GetxController {
     getUser().then((_) {
       handleRecoveryEnergy();
     });
+    getUserItems();
     maxEnergy.value = MAX_ENERGY;
+  }
+
+  Future<void> getUserItems() async {
+    userItems.value = await itemService.getUserItemsInventory(supabaseUser!.id);
   }
 
   Future<void> getUser() async {

@@ -162,7 +162,7 @@ class OrderByCondition {
 }
 
 /// Opções de busca (WHERE, ORDER BY, LIMIT)
-class FindOptions extends DatabaseAdapterFindOptions {
+class FindOptions implements DatabaseAdapterFindOptions {
   final int? limit;
   final List<FilterCondition>? where;
   final List<OrderByCondition>? orderBy;
