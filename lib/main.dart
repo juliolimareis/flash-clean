@@ -5,7 +5,7 @@ import 'package:flash_clean/pages/routes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final VERSION = "v1.0.4";
+final VERSION = "v1.0.5";
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,7 +3,7 @@ import 'package:flash_clean/@core/task/entities/task.entity.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskEntity task;
-  final double alfa = 0.4;
+  final double alfa = 0.5;
 
   const TaskCard({super.key, required this.task});
 

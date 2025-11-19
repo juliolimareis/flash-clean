@@ -44,7 +44,7 @@ class UserItemEntity extends Entity {
       userId: map['userId'],
       itemId: map['itemId'],
       createdAt: map['createdAt'],
-      isActive: map['isActive'] ?? false,
+      isActive: map['isActive'],
       expirationDays: map['expirationDays'],
     );
   }

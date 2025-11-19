@@ -9,21 +9,40 @@ class StorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: FlashCleanAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Obx(
-          () => GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: .78,
-            children: controller.items
-                .map((item) => StoreItem(item: item))
-                .toList(),
-          ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: FlashCleanAppBar(),
+        body: TabBarView(
+          children: [
+            _buildItemGrid(controller.skinItems),
+            _buildItemGrid(controller.sideItems),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildItemGrid(RxList<ItemEntity> items) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Obx(
+        () => items.isEmpty
+            ? Center(
+                child: CircularProgressIndicator(color: Colors.orangeAccent),
+              )
+            : GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: .78,
+                ),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return StoreItem(item: items[index]);
+                },
+              ),
       ),
     );
   }
@@ -42,6 +61,7 @@ class StoreItem extends StatelessWidget {
       bool isSelected = (controller.selectedItem.value?.id == item.id);
       bool isOwned = controller.userHaveThisItem(item);
       bool hasCache = controller.hasCash(item);
+      bool isActive = controller.isItemActive(item);
 
       return Container(
         decoration: BoxDecoration(
@@ -79,14 +99,18 @@ class StoreItem extends StatelessWidget {
               SizedBox(height: 4),
 
               Visibility(
-                visible: !isOwned && hasCache,
+                visible: !isOwned,
                 child: ElevatedButton(
                   onPressed: () {
-                    controller.selectItem(item);
-                    processItem();
+                    if (hasCache) {
+                      controller.selectItem(item);
+                      onDialogItem();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: hasCache
+                        ? Colors.orangeAccent
+                        : Colors.grey.shade400,
                     foregroundColor: Colors.black,
                   ),
                   child: const Text(
@@ -95,13 +119,39 @@ class StoreItem extends StatelessWidget {
                   ),
                 ),
               ),
-
               Visibility(
-                visible: isOwned,
-                child: Icon(Icons.check_circle, color: Colors.green, size: 36),
+                visible: isOwned && !isActive,
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.activeItem(item, true);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text(
+                    "Active",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
-
-              SizedBox(height: 8),
+              Visibility(
+                visible: isOwned && isActive,
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.activeItem(item, false);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text(
+                    "Activated",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
             ],
           ),
         ),
@@ -109,7 +159,7 @@ class StoreItem extends StatelessWidget {
     });
   }
 
-  void processItem() {
+  void onDialogItem() {
     final item = controller.selectedItem.value;
     if (item == null) return;
 

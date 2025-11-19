@@ -1,7 +1,7 @@
 import "package:flash_clean/@core/common/entities/entity.dart";
 
 // ignore: constant_identifier_names
-enum ItemType { SKIN, SIDE, ARTEFACT }
+enum ItemType { SKIN, SIDE, ARTEFACT, PROFILE }
 
 class ItemEntity extends Entity {
   int price;
@@ -57,7 +57,7 @@ class ItemEntity extends Entity {
       discount: map['discount'] ?? 0,
       type: itemTypeFromInt(map['type']),
       expirationDays: map['expirationDays'],
-      isAvailableInStore: map['isAvailableInStore'] ?? false,
+      isAvailableInStore: map['isAvailableInStore'],
     );
   }
 
@@ -77,6 +77,8 @@ class ItemEntity extends Entity {
         return "Side";
       case ItemType.ARTEFACT:
         return "Artefact";
+      case ItemType.PROFILE:
+        return "Profile";
     }
   }
 }

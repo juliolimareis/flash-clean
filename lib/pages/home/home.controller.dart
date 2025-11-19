@@ -1,3 +1,4 @@
+import 'package:flash_clean/@core/item/entities/Item.entity.dart';
 import 'package:flash_clean/@core/user/entities/userInventoryItem.entity.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -32,16 +33,16 @@ class HomeController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    onGetAllTasksWithLoader();
     getUser().then((_) {
       handleRecoveryEnergy();
+      getUserItems();
     });
-    getUserItems();
     maxEnergy.value = MAX_ENERGY;
   }
 
   Future<void> getUserItems() async {
     userItems.value = await itemService.getUserItemsInventory(supabaseUser!.id);
+    onGetAllTasksWithLoader();
   }
 
   Future<void> getUser() async {
@@ -162,6 +163,19 @@ class HomeController extends GetxController {
   Future<void> onGetAllTasks() async {
     final currentTasks = await taskService.getAll(null);
 
+    for (TaskEntity task in currentTasks) {
+      final activeSkin = getActiveSkin();
+      final activeSide = getActiveSide();
+
+      if (activeSkin != null) {
+        task.imageUrlBackground = activeSkin.item.imageUrl;
+      }
+
+      if (activeSide != null) {
+        task.imageUrlSide = activeSide.item.imageUrl;
+      }
+    }
+
     tasks.value = currentTasks
       ..sort(
         (a, b) => b.expirationPercentage.compareTo(a.expirationPercentage),
@@ -170,5 +184,44 @@ class HomeController extends GetxController {
 
   Future<void> goToStore() async {
     Get.toNamed('/store');
+  }
+
+  UserInventoryItemEntity? getActiveSkin() {
+    final userItem = userItems.firstWhereOrNull(
+      (userItem) => userItem.item.type == ItemType.SKIN && userItem.isActive,
+    );
+
+    if (userItem != null) {
+      if (userItem.isExpired) {
+        itemService.removeUserItem(userItem.id as String);
+        return null;
+      }
+      return userItem;
+    }
+
+    return null;
+  }
+
+  UserInventoryItemEntity? getActiveSide() {
+    final userItem = userItems.firstWhereOrNull(
+      (userItem) => userItem.item.type == ItemType.SIDE && userItem.isActive,
+    );
+
+    if (userItem != null) {
+      if (userItem.isExpired) {
+        itemService.removeUserItem(userItem.id as String);
+        return null;
+      }
+      return userItem;
+    }
+
+    return null;
+  }
+
+  UserInventoryItemEntity? getActiveArtefact() {
+    return userItems.firstWhereOrNull(
+      (userItem) =>
+          userItem.item.type == ItemType.ARTEFACT && userItem.isActive,
+    );
   }
 }

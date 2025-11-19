@@ -40,7 +40,10 @@ class UserItemRepository implements DatabaseRepositoryI<UserItemEntity> {
 
   @override
   Future<UserItemEntity> create(UserItemEntity userItem) async {
-    final inserted = await _adapter.insert(userItem.toMap());
+    final toInsert = userItem.toMap();
+    toInsert.remove('id');
+
+    final inserted = await _adapter.insert(toInsert);
 
     return UserItemEntity.fromMap(inserted);
   }
